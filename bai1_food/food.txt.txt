@@ -1,0 +1,206 @@
+CREATE DATABASE db_node33;
+USE db_node33;
+CREATE TABLE food_type (
+	type_id INT PRIMARY KEY AUTO_INCREMENT,
+	type_name VARCHAR(200)
+);
+
+CREATE TABLE restaurant (
+	res_id INT PRIMARY KEY AUTO_INCREMENT,
+	res_name VARCHAR(200),
+	image VARCHAR(200),
+	description VARCHAR(200)
+);
+#Thêm data vào bảng restaurant
+INSERT INTO restaurant (res_name, image, description) VALUES
+('Nhà hàng A', 'img/restaurant_a.jpg', 'Nhà hàng A là một nhà hàng Việt Nam truyền thống.'),
+('Nhà hàng B', 'img/restaurant_b.jpg', 'Nhà hàng B là một nhà hàng Nhật Bản.'),
+('Nhà hàng C', 'img/restaurant_c.jpg', 'Nhà hàng C là một nhà hàng Trung Quốc.'),
+('Nhà hàng D', 'img/restaurant_d.jpg', 'Nhà hàng D là một nhà hàng Hàn Quốc.'),
+('Nhà hàng E', 'img/restaurant_e.jpg', 'Nhà hàng E là một nhà hàng Ý.')
+CREATE TABLE user (
+	user_id INT PRIMARY KEY AUTO_INCREMENT,
+	full_name VARCHAR (200),
+	email VARCHAR(200),
+	password VARCHAR(200)
+)
+#Thêm data vào bảng user
+INSERT INTO user (full_name, email, password) VALUES
+('John Doe', 'johndoe@gmail.com', 'password1'),
+('Jane Doe', 'janedoe@gmail.com', 'password2'),
+('Mary Smith', 'marysmith@gmail.com', 'password3'),
+('Peter Jones', 'peterjones@gmail.com', 'password4'),
+('David Brown', 'davidbrown@gmail.com', 'password5'),
+('Sarah White', 'sarahwhite@gmail.com', 'password6'),
+('Michael Green', 'michaelgreen@gmail.com', 'password7'),
+('Emily Gray', 'emilygray@gmail.com', 'password8'),
+('Thomas Black', 'thomasblack@gmail.com', 'password9'),
+('Jennifer Pink', 'jenniferpink@gmail.com', 'password10'),
+('Robert Orange', 'robertorange@gmail.com', 'password11'),
+('Elizabeth Purple', 'elizabethpurple@gmail.com', 'password12'),
+('James Blue', 'jamesblue@gmail.com', 'password13'),
+('Alice Green', 'alicegreen@gmail.com', 'password14'),
+('William Yellow', 'williamyellow@gmail.com', 'password15'),
+('Mary Red', 'maryred@gmail.com', 'password16'),
+('John White', 'johnwhite@gmail.com', 'password17'),
+('Jane Black', 'janeblack@gmail.com', 'password18'),
+('Mary Pink', 'marypink@gmail.com', 'password19'),
+('Peter Orange', 'peterorange@gmail.com', 'password20')
+
+
+
+
+
+---------------------------------------------------------------------
+#Tạo bảng có khóa phụ
+CREATE TABLE rate_res (
+	amount INT,
+	date_rate DATETIME,
+	user_id INT,
+	res_id INT,
+	PRIMARY KEY (user_id, res_id),
+	FOREIGN KEY (user_id) REFERENCES user(user_id),
+	FOREIGN KEY (res_id) REFERENCES restaurant(res_id)
+)
+#Thêm data vào bảng rate_res
+INSERT INTO rate_res (user_id, res_id, amount, date_rate) VALUES
+(1, 1, 5, NOW()),
+(14, 3, 5, NOW()),
+(13, 5, 5, NOW()),
+(5, 4, 5, NOW()),
+(6, 2, 5, NOW()),
+(4, 1, 5, NOW())
+
+CREATE TABLE like_res (
+	user_id INT, 
+	res_id INT,
+	date_like DATETIME,
+	PRIMARY KEY (user_id, res_id),
+	FOREIGN KEY (user_id) REFERENCES user(user_id),
+	FOREIGN KEY (res_id) REFERENCES restaurant(res_id)
+)
+#Thêm data vào bảng like_res
+INSERT INTO like_res (user_id, res_id, date_like) VALUES
+(2, 1, NOW()),
+(7, 1, NOW()),
+(11, 5, NOW()),
+(2, 4, NOW()),
+(15, 3, NOW()),
+(2, 3, NOW()),
+(19, 1, NOW()),
+(2, 2, NOW()),
+(17, 1, NOW()),
+(11, 4, NOW()),
+(15, 2, NOW()),
+(5, 1, NOW())
+
+CREATE TABLE orders (
+	orders_id INT PRIMARY KEY AUTO_INCREMENT,
+	user_id INT, 
+	food_id INT,
+	amount INT,
+	code VARCHAR(200),
+	arr_sub_id VARCHAR(200),
+	FOREIGN KEY (user_id) REFERENCES user(user_id),
+	FOREIGN KEY (food_id) REFERENCES food(food_id)
+)
+#Thêm data vào bảng order
+INSERT INTO orders (user_id, food_id, amount, code, arr_sub_id) VALUES
+(1, 2, 2, 'code_1', '1, 3'),
+(5, 2, 2, 'code_2', '1, 3'),
+(7, 2, 2, 'code_3', '1, 3'),
+(4, 2, 2, 'code_4', '1, 3'),
+(7, 4, 1, 'code_5', '8')
+
+
+CREATE TABLE sub_food (
+	sub_id INT PRIMARY KEY AUTO_INCREMENT,
+	sub_name VARCHAR(200),
+	sub_price FLOAT,
+	food_id INT,
+	FOREIGN KEY (food_id) REFERENCES food(food_id)
+)
+#Thêm data vào bảng sub_food
+INSERT INTO sub_food (sub_name, sub_price, food_id) VALUES
+('Tép mỡ', 5.000, 1),
+('Chả ram', 8.000, 5),
+('Giá', 1.000, 2),
+('Giá', 1.000, 3),
+('Rau sống', 2.000, 2),
+('Rau sống', 2.000, 3),
+('Tôm', 50.000, 5),
+('Cá', 40.000, 5),
+('Mực', 50.000, 5),
+('Gà', 50.000, 4)
+
+CREATE TABLE food (
+	food_id INT PRIMARY KEY AUTO_INCREMENT,
+	food_name VARCHAR (200),
+	image VARCHAR(200),
+	price FLOAT,
+	description VARCHAR (200),
+	type_id INT,
+	
+	FOREIGN KEY(type_id) REFERENCES food_type(type_id)
+	
+)
+
+
+# 5 người like nhà hàng nhiều nhất
+-- SELECT user.user_id, COUNT(*) AS like_count
+-- FROM user
+-- INNER JOIN like_res AS l_r ON user.user_id = l_r.user_id
+-- GROUP BY user.user_id
+-- ORDER BY like_count DESC
+-- # sắp xếp theo thứ tự
+-- LIMIT 5;
+# cách 2:
+SELECT user.*, like_counts.total_like
+FROM `user`
+INNER JOIN (
+	SELECT user_id, COUNT(res_id) AS total_like
+	FROM like_res
+	GROUP BY user_id
+	ORDER BY total_like DESC
+	LIMIT 5
+) AS like_counts ON `user`.user_id = like_counts.user_id
+
+# 2 nhà hàng có lượt like nhiều nhất
+SELECT restaurant.*, like_counts.total_like
+FROM restaurant
+INNER JOIN (
+	SELECT res_id, COUNT(res_id) AS total_like
+	FROM like_res
+	GROUP by res_id
+	ORDER BY total_like DESC
+	LIMIT 2
+) AS like_counts ON restaurant.res_id = like_counts.res_id
+
+#Tìm người đã đặt hàng nhiều nhất
+SELECT user.*, order_counts.total_order
+FROM `user`
+INNER JOIN (
+	SELECT user_id, COUNT(orders_id) AS total_order
+	FROM orders
+	GROUP BY user_id
+	ORDER BY total_order DESC
+	LIMIT 1
+) as order_counts ON `user`.user_id = order_counts.user_id
+
+#Tìm người dùng không hoạt động trong hệ thống 
+SELECT * 
+FROM `user`
+WHERE `user`.user_id NOT IN (SELECT DISTINCT user_id FROM like_res)
+AND `user`.user_id NOT IN (SELECT DISTINCT user_id FROM rate_res)
+AND `user`.user_id NOT IN (SELECT DISTINCT user_id FROM orders) 
+ORDER BY `user`.user_id
+
+#Tính trung bình sub_food của một food
+SELECT ROUND(AVG(sub_food_count)) AS avg_sub_food
+FROM (
+	SELECT food_id, COUNT(sub_id) AS sub_food_count
+	FROM sub_food
+	GROUP BY food_id
+) AS subquery
+
+
